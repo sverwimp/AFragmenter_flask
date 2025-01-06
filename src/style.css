@@ -1,0 +1,336 @@
+/* Poppins font */
+/*
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+*/
+
+:root{
+    --darkblue: #2b2d42;
+    --bluegrey: #8d99ae;
+    --light: #edf2f4;
+    --orangeaccent: #f28f3b;
+    --redaccent: #c1292e;
+    --speed: 0.25s;
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html{
+    font-size: 12pt;
+    font-family: Poppins, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+nav {
+    height: 60px;
+    background-color: var(--darkblue);
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.links-container {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: row;
+    align-items: center;
+}
+
+nav a{
+    height: 100%;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: var(--light);
+}
+
+nav a:hover{
+    background-color: var(--bluegrey);
+}
+
+nav p {
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    margin-right: auto;
+    color: var(--light);
+}
+
+#conda-logo {
+    width: 40px;
+    height: 40px;
+}
+
+#pypi-logo {
+    width: 40px;
+    height: 40px;
+}
+
+.home-link {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-right: 10px;
+}
+
+.nav-description {
+    font-size: 0.9rem;
+}
+
+@media(max-width: 1060px) {
+    .nav-description {
+        display: none;
+    }
+    .home-link {
+        margin-right: auto;
+    }
+}
+
+nav svg {
+    fill: var(--light);
+}
+
+#sidebar-active {
+    display: none;
+}
+
+.open-sidebar-button, .close-sidebar-button {
+    display: none;
+}
+
+@media(max-width: 590px) {
+    .nav-description, .home-link {
+        display: none;
+        margin-right: 0;
+    }
+
+    .links-container {
+        flex-direction: column;
+        align-items: flex-start;
+
+        position: fixed;
+        top: 0;
+        left: -100%;
+        z-index: 10;
+        width: 150px;
+
+        background-color: var(--darkblue);
+        box-shadow: -5px 0 5px rgba(0, 0, 0, 0.25);
+        transition: var(--speed) ease-out;
+    }
+    nav a {
+        box-sizing: border-box;
+        height: auto;
+        width: 100%;
+        padding: 20px 20px;
+        justify-content: center;
+    }
+
+    .open-sidebar-button, .close-sidebar-button {
+        padding: 10px;
+        display: block;
+    }
+
+    #sidebar-active:checked ~ .links-container {
+
+        left: 0;
+    }
+
+    #sidebar-active:checked ~ #overlay {
+        /*background: red; */
+        height: 100%;
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 9;
+    }
+
+}
+
+.container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    background-color: var(--light);
+}
+
+.inputs {
+    flex: 1;
+    flex-direction: column;
+    width: 25%;
+    padding: 20px;
+    min-width: 250px;  /* TODO: change this to something better*/
+    /*background-color: green;*/
+}
+
+/* Inputy type selection */
+.inputs-select {
+    height: 48px;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    position: relative;
+    border: 4px solid var(--darkblue);
+    border-radius: 8px;
+    background: var(--light);
+
+    max-width: 300px;
+}
+.inputs-select {
+    --ease: linear(
+    0, 0.1641 3.52%, 0.311 7.18%,
+    0.4413 10.99%, 0.5553 14.96%,
+    0.6539 19.12%, 0.738 23.5%,
+    0.8086 28.15%, 0.8662 33.12%,
+    0.9078 37.92%, 0.9405 43.12%,
+    0.965 48.84%, 0.9821 55.28%,
+    0.992 61.97%, 0.9976 70.09%, 1
+  );
+}
+
+.inputs-select > input,
+.sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border-width: 0;
+}
+
+.inputs-select:has(:checked:nth-of-type(1)) { --active: 0; }
+.inputs-select:has(:checked:nth-of-type(2)) { --active: 1; }
+.inputs-select:has(:checked:nth-of-type(3)) { --active: 2; }
+.inputs-select:has(:checked:nth-of-type(4)) { --active: 3; }
+
+.inputs-select :checked + label { --highlight: 1; }
+
+.inputs-select:has(input:nth-of-type(2)) { --count: 2; }
+.inputs-select:has(input:nth-of-type(3)) { --count: 3; }
+.inputs-select:has(input:nth-of-type(4)) { --count: 4; }
+
+.inputs-select label {
+	padding: 0 clamp(0.5rem, 2vw + 0.25rem, 2rem);
+	cursor: pointer;
+	text-align: center;
+	height: 100%;
+	display: grid;
+	border-radius: 4;
+	place-items: center;
+    /*background: var(--light);*/
+	/* color: hsl(0 100% 0% / calc(0.5 + var(--highlight, 0))); */
+	color: hsl(0 0% calc(35% + var(--highlight, 0) * 100%));
+    transition: background, color;
+    transition-duration: var(--speed);
+    transition-timing-function: var(--ease, ease);
+    z-index: 1;
+}
+
+input:not(:checked) + label:hover {
+	--highlight: 0.85;
+	background: var(--bluegrey);
+}
+
+.inputs-select::after {
+	pointer-events: none;
+	content: "";
+	width: calc(100% / var(--count));
+	height: 100%;
+    background: var(--darkblue);
+	position: absolute;
+	border-radius: 4;
+	translate: calc(var(--active, 0) * 100%) 0;
+	transition: translate, outline-color;
+    transition-duration: var(--speed);
+    transition-timing-function: var(--ease, ease);
+	outline: 2px solid transparent;
+    z-index: 0;
+}
+
+.inputs-select:has(:focus-visible)::after {
+    outline-color: red;
+}
+
+input:checked + label {
+    --highlight: 1;
+}
+
+
+
+.inputs .inputs-data {
+    display: none;
+    margin: 10px 0;
+    padding: 10px;
+}
+
+/*
+#radio-afdb:checked ~ .div-afdb {
+    display: block;
+    background-color: magenta;
+}
+
+#radio-afdb:checked ~ .outputs {
+    background-color: red;
+}
+
+#radio-affiles:checked ~ .div-affiles {
+    display: block;
+}
+*/
+
+.inputs-select:has(#radio-afdb:checked) ~ #div-afdb {
+    display: block;
+    background-color: magenta;
+}
+
+.inputs-select:has(#radio-affiles:checked) ~ #div-affiles {
+    display: block;
+    background-color: yellow;
+}
+
+/*
+<div class="inputs">
+    <div class="inputs-select">
+        <input type="radio" id="radio-afdb" name="input-type" value="afdb" checked>
+        <label for="radio-afdb">AFDB</label>
+        <input type="radio" id="radio-affiles" name="input-type" value="affiles">
+        <label for="radio-affiles">File upload</label>
+    </div>
+
+    <div>
+        <div class="div-afdb">
+            <label for="afdb-input">UniProt ID</label>
+            <input type="text" id="afdb-input" name="afdb-input">
+        </div>
+
+        <div class="div-affiles">
+            <label for="affiles-json">AF json file</label>
+            <input type="file" id="affiles-json" name="affiles-json" accept=".json">
+            <label for="affiles-structure">AF structure file</label>
+            <input type="file" id="affiles-structure" name="affiles-structure" accept=".pdb,.cif,.mmcif">
+        </div>
+    </div>
+</div>
+
+*/
+
+
+
+
+.outputs {
+    flex: 2;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 75%;
+    padding: 20px;
+    background-color: blue;
+}

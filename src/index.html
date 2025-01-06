@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+    }
+
+    footer {
+        background-color: #f8f9fa;
+        color: #495057;
+        padding: 20px;
+        text-align: center;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        border-top: solid 1px #e0e3e7;
+    }
+
+    .bottom-info {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    .bottom-info div {
+        width: 33%;
+    }
+
+    .bottom-info div a {
+        color: #495057;
+        text-decoration: none;
+    }
+
+    .bottom-info div a:hover {
+        color: #007bff;
+    }
+
+    .bottom-info div img {
+        width: 30px;
+        margin: 10px;
+    }
+</style>
+
+<!--
+<script src="script.js"></script>
+-->
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AFragmenter</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+</head>
+
+
+<body>
+
+<nav>
+    <input type="checkbox" id="sidebar-active">
+    <label for="sidebar-active" class="open-sidebar-button">
+        <svg xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 -960 960 960" width="32" fill="#e8eaed"><path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/></svg>
+    </label>
+
+    <label id="overlay" for="sidebar-active"></label>
+    <div class="links-container">
+        <label for="sidebar-active" class="close-sidebar-button">
+            <svg xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 -960 960 960" width="32" fill="#e8eaed"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+        </label>
+
+        <p class="home-link">AFragmenter</p>
+        <p class="nav-description">Flexible and schema free AlphaFold protein structure partitioning</p>
+
+        <a href="https://github.com/sverwimp/AFragmenter" target="_blank">Documentation</a>
+        <a href="https://www.kuleuven.be/wieiswie/en/person/ue715683" target="_blank">Contact</a>
+        <a href="https://github.com/sverwimp/AFragmenter" target="_blank"><img src="images/conda-logo.png" alt="" id="conda-logo"></a>
+        <a href="https://pypi.org/project/AFragmenter/" target="_blank"><img src="images/PyPI-Logo.png" alt="" id="pypi-logo"></a>
+
+    </div>
+</nav>
+
+
+<main>
+    <div class="container">
+        <div class="inputs">
+            <div class="inputs-select">
+                <input type="radio" id="radio-afdb" name="input-type" value="afdb" checked>
+                <label for="radio-afdb">AFDB</label>
+                <input type="radio" id="radio-affiles" name="input-type" value="affiles">
+                <label for="radio-affiles">File upload</label>
+            </div>
+
+            <div class="inputs-data" id="div-afdb">
+                <label for="afdb-input">UniProt ID</label>
+                <input type="text" id="afdb-input" name="afdb-input">
+            </div>
+
+            <div class="inputs-data" id="div-affiles">
+                <label for="affiles-json">AF json file</label>
+                <input type="file" id="affiles-json" name="affiles-json" accept=".json">
+                <label for="affiles-structure">AF structure file</label>
+                <input type="file" id="affiles-structure" name="affiles-structure" accept=".pdb,.cif,.mmcif">
+            </div>
+
+            <!--
+            <div class="test-radio">
+                <input type="radio" id="radio-test" name="input-type" value="test">
+                <label for="radio-test">Test</label>
+                <input type="radio" name="input-type" id="radio-test2" value="test2">
+                <label for="radio-test2">Test2</label>
+            </div>
+            -->
+
+        </div>
+
+        <div class="outputs">
+            
+        </div>
+    </div>
+        
+</main>
+
+
+<!--
+<div>
+    <footer>
+        <div class="bottom-info">
+            <div>
+                <a href="https://www.biw.kuleuven.be/m2s/cmpg/research/CSB" target="_blank">© 2024-2025 Computational Systems Biology, KU Leuven</a>
+            </div>
+            <div>
+                <a href="https://www.kuleuven.be/wieiswie/en/person/ue715683" target="_blank">Contact details</a>
+            </div>
+            <div>
+                <a href="https://github.com/sverwimp/AFragmenter" target="_blank"><img src="img/github-logo.png" alt=""></a>
+                <a href="https://pypi.org/project/AFragmenter/" target="_blank"><img src="img/pypi-logo.png" alt=""></a>
+            </div>
+        </div>
+    </footer>
+</div>
+-->
+
+</body>
+
+
+
+</html>
