@@ -89,7 +89,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-
     const paeThresholdSliderValue = document.querySelector('.pae-threshold-value');
     const paeThresholdSlider = document.querySelector('.pae-threshold-range');
     const resolutionSliderValue = document.querySelector('.resolution-value')
@@ -99,15 +98,69 @@ document.addEventListener('DOMContentLoaded', function() {
     setupSliderControlEvents(resolutionSlider, resolutionSliderValue);
 
 
-   // Handle form submission
-   const form = document.querySelector('#main-form');
-   form.addEventListener('submit', (event) => {
+    /*
+    // Handle form submission
+    const form = document.querySelector('#main-form');
+    form.addEventListener('submit', () => {
         if (!form.checkValidity()) {
             e.preventDefault();
         } else {
             form.submit();
         }
-   });
+    });
+    */
+
+    const form = document.querySelector('#main-form');
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault(); // Prevent form submission
+
+        if (!form.checkValidity()) {
+            return; // stop execution if form is invalid
+        }
+
+        let formData = new FormData(form); // Extract form data
+
+        try {
+            let response = await fetch('/process', {
+                method: 'POST',
+                body: formData
+            });
+
+            let result = await response.json();
+
+            if (result.success) {
+                updateTable(result.data);
+            } else {
+                alert("Error: " + result.error);
+            }
+        } catch (error) {
+            console.error("Error: " + error);
+            alert("Error: " + error);
+        }
+    });
+
+    function updateTable(data) {
+        let tableBody = document.getElementById('result-table-body');
+        tableBody.innerHTML = ''; // Clear table
+
+        Object.entries(data).forEach(([key, intervals]) => {
+            let keyNumber = parseInt(key) + 1; // Increment key by 1
+
+            // Compute total size of all intervals
+            let totalSize = intervals.reduce((sum, [start, end]) => sum + (end - start + 1), 0);
+
+            // Format intervals as "start-end_start-end"
+            let formattedIntervals = intervals.map(([start, end]) => `${start + 1}-${end + 1}`).join("_");
+
+            // Create new table row
+            let newRow = document.createElement("tr");
+            newRow.innerHTML = `<td>${keyNumber}</td><td>${totalSize}</td><td>${formattedIntervals}</td>`;
+            tableBody.appendChild(newRow);
+        });
+
+    }
+
+   
 
     
 });
