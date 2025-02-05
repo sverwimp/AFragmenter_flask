@@ -78,24 +78,34 @@ main {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    padding: 10px 60px;
+    /*padding: 30px 60px;*/
+    padding: 60px;
 }
 
 .main-left {
     flex: 1;
     padding: 20px;
-    background-color: #F79824;
+    /*background-color: #F79824;*/
+    border: 4px solid var(--gunmetal);
+    border-radius: 16px;
+    max-width: 350px;
+    
 }
 .main-right {
-    flex: 2;
+    flex: 3;
     min-width: 300px;
     padding: 20px;
     background-color: #33A1FD;
-    display: w
 }
 
 
 /*https://uiverse.io/Ghost-aft/cowardly-walrus-30*/
+
+.input {
+    min-height: 11rem;
+}
+
+
 .input-type input {
     display: none;
 }
@@ -105,12 +115,13 @@ main {
     position: relative;
     display: flex;
     align-items: center;
+    outline: 4px solid var(--gunmetal);
+    outline-offset: -1px; /*Fixes some weird fringing around the corners*/
     border-radius: 8px;
     background-color: var(--whitebackground);
     color: var(--gunmetal);
     width: var(--container_width);
     overflow: hidden;
-    border: 4px solid var(--gunmetal);
 }
 
 .input-type label {
@@ -155,19 +166,15 @@ main {
 
 .input-data {
     display: flex;
-    margin: 10px 5px;
+    margin: 24px 8px 0px 8px;
 }
 
-.div-afdb {
-    display: flex;
-    flex-direction: row;
 
-}
 
 .uniprot-form {
     display: flex;
     padding: .375rem .75rem;
-
+    border-radius: 0.25rem;
 }
 
 .btn {
@@ -176,12 +183,18 @@ main {
     border: 1px solid grey;
     padding: .375rem .75rem;
     border-radius: .25rem;
+    margin-left: 5px;
+    background-color: var(--blue);
+    color: var(--whitebackground);
+}
+.btn:hover {
+    background-color: var(--lightblue);
 }
 
 .div-affiles {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 16px;
 }
 
 .input-label {
@@ -198,8 +211,148 @@ main {
     font-size: 0.875rem;
     color: #1f2937; /* text-gray-900 */
     border: 1px solid #d1d5db; /* border-gray-300 */
-    border-radius: 0.5rem; /* rounded-lg */
     cursor: pointer;
     background-color: #f9fafb; /* bg-gray-50 */
     outline: none;
+}
+
+.options {
+    padding: 10px;
+}
+
+.options-title {
+    margin-top: 12px;
+    margin-bottom: 12px;
+    font-size: 20px;
+    text-decoration: underline;
+}
+
+.options-wrapper {
+    display: flex;
+    flex-direction: column;
+    max-width: 300px;
+    gap: 1rem;
+}
+
+.pae-threshold-wrapper {
+    display: flex;
+    flex-direction: column;
+
+}
+
+.range-text-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.options-range {
+    width: 100%;
+}
+
+
+.toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+
+.merge-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    height: 24px;
+}
+
+.merge-wrapper input {
+    display: none;
+}
+
+.toggle-container {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--gunmetal);
+    transition: 0.25s;
+    border-radius: 24px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: #FFF;
+    transition: 0.25s;
+    border-radius: 50%;
+}
+
+.checkbox_inp:checked + .slider {
+    background-color: var(--blue);
+    /*background-color: #060;*/
+}
+
+.checkbox_inp:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+.range-value {
+    width: 50px; 
+    border: none; 
+    font-size: 1rem;
+}
+
+
+
+
+/* Hide arrows in Firefox by default */
+input[type="number"] {
+    appearance: textfield; 
+}
+
+/* Show arrows on hover in Firefox */
+input[type="number"]:hover {
+    appearance: auto; 
+}
+
+
+
+.table-results-div {
+    min-height: 40vh;
+}
+
+
+.visual-results-wrapper {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.options-number {
+    font-size: 0.9rem;
+}
+
+
+summary {
+    padding-bottom: 0.9rem;
+}
+
+.more-options {
+    font-size: 0.9rem;
+    margin-left: 12px;
 }
