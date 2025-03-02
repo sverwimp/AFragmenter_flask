@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, jsonify
 from flask_wtf.csrf import CSRFProtect
-from afragmenter import AFragmenter
+from afragmenter import AFragmenter, fetch_afdb_data
+from afragmenter.structure_displacement import displace_structure
+from afragmenter.sequence_reader import SequenceReader
 import numpy as np
 
 from .form import InputForm
@@ -69,84 +71,68 @@ def process_input():
     except Exception as e:
         app.logger.error(f"Error processing input: {str(e)}")
         return jsonify({'error': str(e)}), 500
+
+
+def run_afragmenter(pae_data, pae_threshold, resolution, objective_function, n_iterations, min_size):
+    try:
+        a = AFragmenter(pae_matrix=pae_data, threshold=pae_threshold)
+        a = a.cluster(resolution=resolution, objective_function=objective_function, n_iterations=n_iterations, min_size=min_size)
+        return a.cluster_intervals
+    except Exception as e:
+        return {'error': str(e)}
     
+
+def format_return_data(cluster_intervals, structure, structure_format):
+    #structure_displaced = displace_structure(structure, cluster_intervals, structure_format)
+    return {
+        'success': True, 
+        'data': {
+            'cluster_intervals': cluster_intervals,
+            'structure': structure,
+            'structure_format': structure_format,
+            #'structure_displaced': structure_displaced
+        },
+        
+    }
+
 
 def process_afdb_input(data: dict):
-    print("Got to process_afdb_input")
-    return {'error': 'NotImplementedError: process_afdb_input has not been implemented yet.'}
+    pae, structure = fetch_afdb_data(data.get('uniprot_id'))
+    if pae is None:
+        return {'error': 'No PAE data found for the given UniProt ID.'}
+    if structure is None:
+        return {'error': 'No structure data found for the given UniProt ID.'}
+    
+    cluster_intervals = run_afragmenter(pae, 
+                                        data.get('pae_threshold'), 
+                                        data.get('resolution'), 
+                                        data.get('objective_function'), 
+                                        data.get('iterations'), 
+                                        data.get('min_size'))
+    
+    if isinstance(cluster_intervals, dict) and 'error' in cluster_intervals:
+        return cluster_intervals
+    
+    structure_format = SequenceReader.determine_file_format(structure)
+    return format_return_data(cluster_intervals, structure, structure_format)
 
-
-
-
-def validate_pae(pae: np.ndarray) -> None:
-    """
-    Validate some properties of the Predicted Aligned Error (PAE) matrix.
-
-    Parameters:
-    - pae (np.ndarray): The PAE matrix.
-
-    Returns:
-    - None
-
-    Raises:
-    - TypeError: If the PAE matrix is not a numpy array.
-    - ValueError: If the PAE matrix is not 2D, not square, or if it contains negative values.
-    """
-    if not isinstance(pae, np.ndarray):
-        raise TypeError("pae must be a numpy array")
-    if pae.ndim != 2:
-        raise ValueError("PAE matrix must be 2D")
-    if pae.shape[0] != pae.shape[1]:
-        raise ValueError("PAE matrix must be square")
-    if np.min(pae) < 0:
-        raise ValueError("PAE values must be non-negative")
-
-# TODO: update AFragmenter code to just be able to call the function load_pae without having to actually read the file
 
 def process_file_upload(data: dict):
+    pae_data = data.get('alphafold_json').read()
+    cluster_intervals = run_afragmenter(pae_data, 
+                                        data.get('pae_threshold'), 
+                                        data.get('resolution'), 
+                                        data.get('objective_function'), 
+                                        data.get('iterations'), 
+                                        data.get('min_size'))
+    if isinstance(cluster_intervals, dict) and 'error' in cluster_intervals:
+        return cluster_intervals
     
-    try:
+    # TODO: need to handle case where structure file is not provided
     
-        file_data = data.get('alphafold_json').read()
-        pae_data = json.loads(file_data.decode('utf-8'))
-        
-        
-        # AF2 format loads as a list containing a dictionary, AF3 and colabfold directly load the dictionary
-        if isinstance(pae_data, list):
-            pae_data = pae_data[0]
-
-        # AFDB v1 and v2 have different keys for the PAE data
-        if "distance" in pae_data:
-            nrows = max(pae_data.get('residue1'))
-            pae_matrix = np.zeros((nrows + 1, nrows + 1))
-            for r, c, v in zip (pae_data.get('residue1'), pae_data.get('residue2'), pae_data.get('distance')):
-                pae_matrix[r, c] = v
-        else:
-            pae = pae_data.get("predicted_aligned_error") or pae_data.get("pae")
-            if pae is None:
-                raise ValueError("PAE data not found in JSON file")
-            pae_matrix = np.stack(pae, axis=0)
-
-        validate_pae(pae_matrix)
-        
-        
-        a = AFragmenter(pae_matrix=pae_matrix, threshold=data.get('pae_threshold'))
-        
-        resolution = data.get('resolution')
-        objective_function = data.get('objective_function')
-        n_iterations = data.get('iterations')
-        min_size = data.get('min_size')
-        a = a.cluster(resolution=resolution, objective_function=objective_function, n_iterations=n_iterations, min_size=min_size)
-
-        result = a.cluster_intervals
-
-        return {'success': True, 'data': result}
-        
-    except Exception as e:
-        print(f'Something went wrong: {str(e)}')
-        return {'error': 'NotImplementedError: process_file_upload has not been implemented correctly yet.', 'message': str(e)}
-        
-    
+    structure_data = data.get('structure_file').read()
+    structure_format = SequenceReader.determine_file_format(structure_data)
+    return format_return_data(cluster_intervals, structure_data, structure_format)
 
 
 

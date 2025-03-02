@@ -3,12 +3,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const affilesRadio = document.querySelector('.radio-affiles');
     const afdbDiv = document.getElementById('div-afdb');
     const affilesDiv = document.getElementById('div-affiles');
-
     
     const uniprotField = document.getElementById('afdb-input');
     const alphafoldJsonField = document.querySelector('.json-file-upload');
-
-    
 
     // Function to set required states based on radio button state
     function setRequiredStates() {
@@ -27,90 +24,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize required states
     setRequiredStates();
-
     afdbRadio.addEventListener('change', function() {
         setRequiredStates();
     });
-
     affilesRadio.addEventListener('change', function() {
         setRequiredStates();
     });
 
-
-    function setupSliderControlEvents(slider, valueElement) {
-        // Put slider value in number input
-        slider.addEventListener("input", (event) => {
-            valueElement.value = event.target.value;
-        });
-    
-        // Put number input value in slider, with range check
-        valueElement.addEventListener("input", () => {
-            const max = parseFloat(valueElement.max);
-            const min = parseFloat(valueElement.min);
-            let passedValue = parseFloat(valueElement.value);
-    
-            // Clamp value to min/max
-            if (passedValue > max) {
-                valueElement.value = max;
-                slider.value = max;
-            } else if (passedValue < min) {
-                valueElement.value = min;
-                slider.value = min;
-            } else {
-                slider.value = passedValue;
-            }
-        });
-    
-        slider.addEventListener("wheel", (event) => {
-            event.preventDefault(); // Prevent page scroll
-    
-            const step = parseFloat(valueElement.step) || 1;
-            let newSliderValue = Number(slider.value);
-    
-            // Adjust value based on wheel scroll direction
-            if (event.deltaY < 0) {
-                newSliderValue += step;
-            } else {
-                newSliderValue -= step;
-            }
-    
-            // Clamp slider value to min/max
-            const max = parseFloat(slider.max);
-            const min = parseFloat(slider.min);
-    
-            if (newSliderValue > max) {
-                newSliderValue = max;
-            } else if (newSliderValue < min) {
-                newSliderValue = min;
-            }
-    
-            // Update slider and value element
-            slider.value = newSliderValue.toFixed(10); // Round to avoid floating point issues
-            valueElement.valueAsNumber = parseFloat(slider.value);
-        });
-    }
-
-    const paeThresholdSliderValue = document.querySelector('.pae-threshold-value');
-    const paeThresholdSlider = document.querySelector('.pae-threshold-range');
-    const resolutionSliderValue = document.querySelector('.resolution-value')
-    const resolutionSlider = document.querySelector('.resolution-range')
-
-    setupSliderControlEvents(paeThresholdSlider, paeThresholdSliderValue);
-    setupSliderControlEvents(resolutionSlider, resolutionSliderValue);
-
-
-    /*
-    // Handle form submission
-    const form = document.querySelector('#main-form');
-    form.addEventListener('submit', () => {
-        if (!form.checkValidity()) {
-            e.preventDefault();
-        } else {
-            form.submit();
-        }
-    });
-    */
-
+    // Form submission
     const form = document.querySelector('#main-form');
     form.addEventListener('submit', async (event) => {
         event.preventDefault(); // Prevent form submission
@@ -129,8 +50,40 @@ document.addEventListener('DOMContentLoaded', function() {
 
             let result = await response.json();
 
+            /*
+            result = {
+                success: true,
+                data: {
+                    cluster_intervals: {
+                        0: [(0, 10), (20, 30), (40, 50)],
+                        1: [(11, 19), (31, 39)]],
+                        ...
+                    },
+                    'structure': '# PDB file content',
+                    'structure_format': 'pdb',
+                },
+                error: null
+            }
+            */
+
+
             if (result.success) {
-                updateTable(result.data);
+                updateTable(result.data.cluster_intervals);
+
+                /*
+                TODO:
+                - Display struture in 3D viewer
+                - Display displaced structure in 3D viewer
+                - Color residues in 3D viewer based on cluster_intervals
+                - display PAE plot
+
+                - Add download button (result, + something else? (like parameters used))
+                */
+        
+
+                update3DViewer(result.data.structure, result.data.cluster_intervals, result.data.structure_format);
+
+
             } else {
                 alert("Error: " + result.error);
             }
@@ -140,6 +93,35 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+
+    // Function to update the 3D viewer
+    function update3DViewer(structure, clusterIntervals, fileFormat) {
+        let viewer3D = document.getElementById('viewer3Dmol');
+        const viewer = $3Dmol.createViewer(viewer3D, {
+            backgroundColor: 'white',
+            defaultcolors: $3Dmol.rasmolElementColors,
+            style: 'cartoon',
+        });
+
+        console.log('viewer: ', viewer);
+
+        viewer.addModel(structure, fileFormat);
+        viewer.setStyle({}, { cartoon: { color: 'grey' } });
+
+        const colorRange = ['red', 'blue', 'green', 'yellow', 'orange', 'purple', 'cyan', 'magenta'];
+        Object.entries(clusterIntervals).forEach(([cluster, intervals], index) => {
+            const color = colorRange[index % colorRange.length];
+            intervals.forEach(([start, end]) => {
+                viewer.setStyle({ resi: `${start + 1}-${end + 1}` }, { cartoon: { color: color } });
+            });
+        });
+
+        viewer.zoomTo();
+        viewer.render();
+    }
+
+
+    // Function to update the result table after form submission
     function updateTable(data) {
         let tableBody = document.getElementById('result-table-body');
         tableBody.innerHTML = ''; // Clear table
@@ -166,12 +148,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const uniprotSearchButton = document.getElementById('uniprotSearch');
     uniprotSearchButton.addEventListener('click', async () => {
         let uniprotId = uniprotField.value;
-        console.log
 
-        if (uniprotId === '') {
-            // do nothing if field is empty
-            return;
-        }
+        // do nothing if field is empty
+        if (uniprotId === '') { return; }
 
         try {
             uniprotId = uniprotId.toUpperCase().trim();
@@ -179,7 +158,6 @@ document.addEventListener('DOMContentLoaded', function() {
             let response = await fetch(afdb_url);
             let uniprotFieldColor = response.ok ? '#C8E6C9' : '#E78587';
             uniprotField.style.backgroundColor = uniprotFieldColor
-
         } catch (error) {
             console.error("Error: " + error);
             alert("Error: " + error);
