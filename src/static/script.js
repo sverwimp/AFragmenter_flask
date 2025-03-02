@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const uniprotField = document.getElementById('afdb-input');
     const alphafoldJsonField = document.querySelector('.json-file-upload');
 
+    
 
     // Function to set required states based on radio button state
     function setRequiredStates() {
@@ -160,8 +161,30 @@ document.addEventListener('DOMContentLoaded', function() {
 
     }
 
-   
 
+    // Check if UniProt ID has an associated AlphaFold prediction
+    const uniprotSearchButton = document.getElementById('uniprotSearch');
+    uniprotSearchButton.addEventListener('click', async () => {
+        let uniprotId = uniprotField.value;
+        console.log
+
+        if (uniprotId === '') {
+            // do nothing if field is empty
+            return;
+        }
+
+        try {
+            uniprotId = uniprotId.toUpperCase().trim();
+            let afdb_url = `https://alphafold.ebi.ac.uk/api/prediction/${uniprotId}`;
+            let response = await fetch(afdb_url);
+            let uniprotFieldColor = response.ok ? '#C8E6C9' : '#E78587';
+            uniprotField.style.backgroundColor = uniprotFieldColor
+
+        } catch (error) {
+            console.error("Error: " + error);
+            alert("Error: " + error);
+        }
+    });
     
 });
 
