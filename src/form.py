@@ -121,10 +121,10 @@ class InputForm(flask_wtf.FlaskForm):
     iterations = wtforms.IntegerField(
         "Iterations for the Leiden clustering algorithm",
         validators=[
-            val.NumberRange(min=0, max=1_000_000),
+            val.NumberRange(min=-1_000_000, max=1_000_000),
             val.Optional()
         ],
-        default=10_000
+        default=-1
     )
 
     submit = wtforms.SubmitField("Submit")
