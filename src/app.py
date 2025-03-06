@@ -24,19 +24,8 @@ def index():
 def process_input():
     form = InputForm()
 
-    print(f'alphafold_json: {form.alphafold_json}')
-    print(f'alphafold_json data: {form.alphafold_json.data}')
-
-    
-    print("test")
-    print(request.files)
-    print(form.alphafold_json.data)
-    print("end test")
-
-    print('Before validation')
     if not (request.method == "POST" and form.validate_on_submit()):
         return jsonify({"error": "Form validation failed", "errors": form.errors}), 400
-    print("After validation")
     
     data = {
         'input_type': form.input_type.data,
@@ -51,10 +40,6 @@ def process_input():
         'iterations': form.iterations.data
     }
 
-
-    print(data)
-    
-    
     try:
         processing_functions = {
             'afdb': process_afdb_input,
@@ -119,6 +104,8 @@ def process_afdb_input(data: dict):
 
 def process_file_upload(data: dict):
     pae_data = data.get('alphafold_json').read()
+    pae_data = json.loads(pae_data)
+    
     cluster_intervals = run_afragmenter(pae_data, 
                                         data.get('pae_threshold'), 
                                         data.get('resolution'), 
@@ -128,9 +115,12 @@ def process_file_upload(data: dict):
     if isinstance(cluster_intervals, dict) and 'error' in cluster_intervals:
         return cluster_intervals
     
-    # TODO: need to handle case where structure file is not provided
-    
+    if not data.get('structure_file'):
+        structure_data = ""
+        return format_return_data(cluster_intervals, structure_data, None)
+        
     structure_data = data.get('structure_file').read()
+    structure_data = structure_data.decode('utf-8')
     structure_format = SequenceReader.determine_file_format(structure_data)
     return format_return_data(cluster_intervals, structure_data, structure_format)
 
@@ -150,24 +140,4 @@ def process():
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-    """
-    TODO:
-    - Check which radio button selected
-    - Get data from AFDB in case 
-    - Process data using AFragmenter
-    - Make figure and return cluster_intervals result for processing using javascript
-
-    json_file = None
-    pae_threshold = None
-    a = AFragmenter(pae_matrix=json_file, threshold=pae_threshold)
-
-    resolution = None
-    objective_function = None
-    n_iterations = None
-    min_size = None
-    a = a.cluster(resolution=resolution, objective_function=objective_function, n_iterations=n_iterations, min_size=min_size)
-
-    result = a.cluster_intervals
-    image, ax = a.plot_pae()
-    """
+    

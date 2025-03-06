@@ -41,56 +41,72 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         let formData = new FormData(form); // Extract form data
+        let userIterations = formData.get('iterations'); // Get user-specified iterations
 
-        try {
-            let response = await fetch('/process', {
-                method: 'POST',
-                body: formData
-            });
+        async function submitForm(iterations) {
+            formData.set('iterations', iterations);
 
-            let result = await response.json();
+            const controller = new AbortController();
+            let timeoutId;
 
-            /*
-            result = {
-                success: true,
-                data: {
-                    cluster_intervals: {
-                        0: [(0, 10), (20, 30), (40, 50)],
-                        1: [(11, 19), (31, 39)]],
-                        ...
-                    },
-                    'structure': '# PDB file content',
-                    'structure_format': 'pdb',
-                },
-                error: null
+            if (iterations < 0) {
+                timeoutId = setTimeout(() => controller.abort(), 30000); // 30 seconds
             }
-            */
 
+            try {
+                let response = await fetch('/process', {
+                    method: 'POST',
+                    body: formData,
+                    signal: controller.signal
+                });
 
-            if (result.success) {
-                updateTable(result.data.cluster_intervals);
+                if (timeoutId) {
+                    clearTimeout(timeoutId);
+                }
 
+                let result = await response.json();
                 /*
-                TODO:
-                - Display struture in 3D viewer
-                - Display displaced structure in 3D viewer
-                - Color residues in 3D viewer based on cluster_intervals
-                - display PAE plot
-
-                - Add download button (result, + something else? (like parameters used))
+                result = {
+                    success: true,
+                    data: {
+                        cluster_intervals: {
+                            0: [(0, 10), (20, 30), (40, 50)],
+                            1: [(11, 19), (31, 39)]],
+                            ...
+                        },
+                        'structure': '# PDB file content',
+                        'structure_format': 'pdb',
+                    },
+                    error: null
+                }
                 */
-        
 
-                update3DViewer(result.data.structure, result.data.cluster_intervals, result.data.structure_format);
+                if (result.success) {
+                    updateTable(result.data.cluster_intervals);
+                    // If structure is available, update 3D viewer
+                    if (result.data.structure && result.data.cluster_intervals) {
+                        update3DViewer(result.data.structure, result.data.cluster_intervals, result.data.structure_format);
+                    }
 
 
-            } else {
-                alert("Error: " + result.error);
+                    // TODO: display PAE plot and add Download button (result, fasta, parameters)
+                } else {
+                    alert("Error: " + result.error);
+                }
+            } catch (error) {
+                if (error.name === 'AbortError' && iterations < 0) {
+                    console.log('Request timed out. Retrying with limited iterations...');
+                    submitForm(1000); // Retry with limited iterations
+                    alert('Request timed out. Retrying with limited iterations...');
+                } else {
+                    console.error("Error: " + error);
+                    alert("Error: " + error);
+                }
             }
-        } catch (error) {
-            console.error("Error: " + error);
-            alert("Error: " + error);
         }
+
+        // Submit the form with the user-specified number of iterations
+        submitForm(userIterations);
     });
 
 
@@ -167,6 +183,7 @@ document.addEventListener('DOMContentLoaded', function() {
     uniprotField.addEventListener('input', () => {
         uniprotField.style.backgroundColor = 'white';
     });
+
     
 });
 
