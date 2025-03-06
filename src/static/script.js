@@ -163,6 +163,10 @@ document.addEventListener('DOMContentLoaded', function() {
             alert("Error: " + error);
         }
     });
+    // Reset color of UniProt ID field when user starts typing
+    uniprotField.addEventListener('input', () => {
+        uniprotField.style.backgroundColor = 'white';
+    });
     
 });
 
