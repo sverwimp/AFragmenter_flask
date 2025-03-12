@@ -5,17 +5,18 @@ from afragmenter.structure_displacement import displace_structure
 from afragmenter.sequence_reader import SequenceReader
 import numpy as np
 
-from .form import InputForm
+from app import app
+
+from app.form import InputForm
 
 from pprint import pprint as print
 import json
 
-app = Flask(__name__, instance_relative_config=True)
-app.config.from_pyfile('config.py')
-csrf = CSRFProtect(app=app)
+
 
 
 @app.route("/")
+@app.route("/index")
 def index():
     form = InputForm()
     return render_template("index.html", form=form)
@@ -135,6 +136,12 @@ def process():
     except Exception as e:
         app.logger.error(f"Error in processing route: {str(e)}")
         return jsonify({"error": str(e)}), 500
+
+
+
+@app.route("/documentation")
+def documentation():
+    return render_template("documentation.html")
 
 
 

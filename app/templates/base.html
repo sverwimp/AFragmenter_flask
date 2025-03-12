@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AFragmenter</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+<script src="{{ url_for('static', filename='sliderControl.js') }}"></script>
+<script src="https://3Dmol.org/build/3Dmol-min.js"></script>     
+<script src="https://3Dmol.org/build/3Dmol.ui-min.js"></script>  
+
+<body>
+
+    <nav>
+        <div class="home-info">
+            <a href="/" class="home-link home-title" >AFragmenter</a>
+            <p class="home-description">Flexible and schema free AlphaFold protein structure partitioning</p>
+        </div>
+        <div class="nav-links">
+            <a class="nav-text-link" href="documentation">Documentation</a>
+            <a class="nav-text-link" href="https://www.kuleuven.be/wieiswie/en/person/ue715683">Contact</a>
+            <a href="https://github.com/sverwimp/AFragmenter">
+                <img src="{{ url_for('static', filename='images/github.svg') }}" alt="GitHub" class="nav-icon" id="github-logo">
+            </a>
+            <a href="https://pypi.org/project/AFragmenter/">
+                <img src="{{ url_for('static', filename='images/pypi.svg') }}" alt="PyPI" class="nav-icon" id="pypi-logo">
+            </a>
+            <a href="https://anaconda.org/bioconda/afragmenter">
+                <img src="{{ url_for('static', filename='images/conda.svg') }}" alt="Conda" class="nav-icon" id="conda-logo">
+            </a>
+        </div>
+    </nav>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+</body>
+
+</html>

@@ -1,0 +1,285 @@
+{% extends "base.html" %}
+
+
+
+{% block content %}
+
+<div class="documentation-main">
+
+    <div class="toc">
+
+        <h2>Table of content</h2>
+        <ul>
+            <li><a href="#tutorial">Quick Tutorial</a></li>
+            <li><a href="#options">Options</a></li>
+            <ul>
+                <li><a href="#threshold">Threshold</a></li>
+                <li><a href="#resolution">Resolution</a></li>
+                <li><a href="#objectivefunction">Objective function</a></li>
+                <li><a href="#minimumsize">Minimum size</a></li>
+                <li><a href="#merge">Merge</a></li>
+            </ul>
+        </ul>
+
+    </div>
+
+    <div class="documentation-content">
+
+        <h1>AFragmenter</h1>
+
+        <p>Flexible and schema free AlphaFold protein structure partitioning</p>
+
+
+
+
+        <h2 id="tutorial">Quick Tutorial</h2>
+        <p>
+        In this short tutorial, we will walk through the process of using AFragmenter to segment protein domains based on AlphaFold structures. 
+        We will use the example protein <a href="https://www.uniprot.org/uniprotkb/P15807/entry">P15807</a> (PDB: <a href="https://www.rcsb.org/structure/1KYQ">1KYQ</a>) to demonstrate the steps involved. 
+        This protein is classified differently by various protein domain databases, making it an interesting case for domain segmentation
+        </p>
+
+        <p class="backgroundInfo" style="background-color: lightgray;">P15807 is classified as a three-domain protein in both <a href="https://www.cathdb.info/pdb/1kyq">CATH</a> and <a href="http://prodata.swmed.edu/ecod/af2_pdb/domain/e1kyqA1#tab-organization">ECOD</a>.
+            In contrast, <a href="https://scop.berkeley.edu/pdb/code=1kyq">SCOPe</a> categorizes it as a two-domain protein, while <a href="https://www.ebi.ac.uk/interpro/protein/UniProt/P15807/">InterPro</a> contains two domains but also includes an additional unintegrated PFAM domain. 
+            Meanwhile, <a href="https://www.ebi.ac.uk/pdbe/scop/term/8001033">SCOP</a> considers MET8 to be single-domain protein</p>
+
+        <br>
+        <p>
+        Since AFragmenter is dependent on the PAE values of AlphaFold, it is a good idea to first have a look at the PAE plot.
+        </p>
+
+        <img src="{{ url_for('static', filename='images/structures/P15807/P15807.png') }}" alt="P15807 PAE plot">
+
+        <p>These PAE values are transformed into edge weights to increase the contrast between high and low PAE values. The <b>PAE contrast threshold</b> can be adjusted to control this contrast. Below, we can see the effect of different thresholds on the weights of the graph.</p>
+
+
+        <img src="{{ url_for('static', filename='images/structures/P15807/P15807_thresholds.png') }}" width=700 alt="Effect of different thresholds on edge weights">
+
+
+        <p>A threshold of 3 seems to give a good contrast between the higher and lower PAE values.</p>
+
+        <p>Next, we cluster the residues into domains using the Leiden clustering algorithm. We get a result, but the resolution parameter can be changed to explore multiple potential solutions.</p>
+
+
+        <p style="text-align: center; font-weight: bold; font-size: 1.2rem;">Resolution = 0.8</p>
+
+        <div style="display: flex;" float="left">
+            <img src="{{ url_for('static', filename='images/structures/P15807/result_resolution_0_8.png') }}" alt="PAE result, resolution = 0.8">
+            <img src="{{ url_for('static', filename='images/structures/P15807/resolution_0_8.png') }}" alt="structure colored by resulting domain">
+        </div>
+
+        <p style="text-align: center; font-weight: bold; font-size: 1.2rem;">Resolution = 1.1</p>
+
+        <p style="display: flex" float="left">
+            <img src="https://raw.githubusercontent.com/sverwimp/afragmenter/master/images/P15807/result_resolution_1_1.png" width=35.8% alt="PAE result, resolution = 1.1"/>
+            <img src="https://raw.githubusercontent.com/sverwimp/afragmenter/master/images/P15807/resolution_1_1.png" width=50% alt="structure colored by resulting domain"/>
+        </p>
+
+        <p style="text-align: center; font-weight: bold; font-size: 1.2rem;">Resolution = 0.3</p>
+        <p style="display: flex" float="left">
+            <img src="https://raw.githubusercontent.com/sverwimp/afragmenter/master/images/P15807/result_resolution_0_3.png" width=35.8% alt="PAE result, resolution = 0.3"/>
+            <img src="https://raw.githubusercontent.com/sverwimp/afragmenter/master/images/P15807/resolution_0_3.png" width=50% alt="structure colored by resulting domain"/>
+        </p>
+
+
+        <h2>Options</h2>
+
+        <h3 id="threshold">Threshold</h3>
+
+        <p>The 'contrast threshold' serves as a soft cut-off to increase the distinction between low and high PAE values. Used in calculating the edge weights of the network and will thus have a large impact on the clustering and segmentation results. It is important to consider this threshold in the context of the AlphaFold results for the protein of interest.</p>
+
+
+        <h4>Examples:</h4>
+
+        <h5><a href="https://alphafold.ebi.ac.uk/entry/Q5VSL9">Q5VSL9</a></h5>
+
+        <p>Overall good structure with high pLDDt and low PAE scores for the majority of the protein, and lower pLDDT and high PAE scores for the disordered regions / loops, like is expected. Default threshold should be good (default PAE threshold = 5).</p>
+
+        <div style="display: flex; justify-content: space-around; flex-direction: row;">
+            <div>
+                <p>AlphaFold structure</p>
+                <img src="https://raw.githubusercontent.com/sverwimp/afragmenter/master/images/Q5VSL9/Q5VSL9.png" alt="Q5VSL9 AF structure"/>
+            </div>
+            <div>
+                <p>PAE plot</p>
+                <img src="https://raw.githubusercontent.com/sverwimp/afragmenter/master/images/Q5VSL9/Q5VSL9_pae.png" alt="Q5VSL9 PAE plot"/>
+            </div>
+            <div>
+                <p>Edge weights</p>
+                <img src="https://raw.githubusercontent.com/sverwimp/afragmenter/master/images/Q5VSL9/Q5VSL9_edge_weights.png" alt="Q5VSL9 edge weights"/>
+            </div>
+        </div>
+
+        <h5><a href="https://alphafold.ebi.ac.uk/entry/P15807">P15807</a></h5>
+
+        <p>Very high pLDDT scores and low PAE scores for the AlphaFold structure indicating strong confidence, with one loop as exception. Several linkers, including the disordered N-terminal region, also show unexpectedly high pLDDT scores and low PAE scores, contrary to what would be expected for such regions. This apparent overconfidence is likely due to the inclusion of the crystal structure (1KYQ) in the AlphaFold training dataset.</p>
+
+        <p>Lowering the treshold can help reduce this apparent confidence, making it easier to differentiate between genuinely well-structured regions ans those that are more likely to be flexible or disordered.</p> 
+
+        <div style="display: flex; justify-content: space-around; flex-direction: row;">
+            <div>
+                <p>AlphaFold structure</p>
+                <img src="https://raw.githubusercontent.com/sverwimp/afragmenter/master/images/P15807/P15807.png" alt="P15807 AF structure"/>
+            </div>
+            <div>
+                <p>PAE plot</p>
+                <img src="https://raw.githubusercontent.com/sverwimp/afragmenter/master/images/P15807/P15807_pae.png" alt="P15807 PAE plot"/>
+            </div>
+            <div>
+                <p>Edge weights (default threshold = 5)</p>
+                <img src="https://raw.githubusercontent.com/sverwimp/afragmenter/master/images/P15807/P15807_edge_weights.png" alt="edge weight using default threshold"/>
+            </div>
+            <div>
+                <p>Edge weights (threshold = 3)</p>
+                <img src="https://raw.githubusercontent.com/sverwimp/afragmenter/master/images/P15807/P15807_edge_weights_3.png" alt="edge weights using PAE threshold = 3"/>
+            </div>
+        </div>
+
+        <h5><a href="https://alphafold.ebi.ac.uk/entry/Q9YFU8">Q9YFU8</a></h5>
+
+        <p>
+        Q9YFU8 is a great example to remind us again that the PAE scores are not primarily intended to be used for domain segmentation,
+        but instead are a measure of how confident AlphaFold is in the relative position of two residues.
+        </p>
+
+        <p>
+        The PAE plot for Q9YFU8 shows two distinct parts of the protein seperated with hight PAE values, indicating uncertainty in their relative positions.
+        Going of off the previous examples, it would not be uncommon to assume there to be two distince domains in this protein, but this isn't necessarily the case.
+        Q9YFU8 has two crystal structures in the PDB: 1W5S and 1W5T. Superpositioning of these crystal structures reveals that a significant portion
+        of the protein overlays well, however another part shows a large deviation in orientation. AlphaFold likely learned this similarity and difference,
+        resulting in low PAE scores for the overlapping regions and high PAE scores between the differently oriented parts.
+        These structures might explain the resulting PAE scores, but this means we still need to pay attention choosing the threshold
+        to properly segment the remaining parts of the protein structure.
+        </p>
+
+        <div>
+            <div>
+                <p>AlphaFold structure</p>
+                <img src="https://raw.githubusercontent.com/sverwimp/afragmenter/master/images/Q9YFU8/Q9YFU8.png" alt="Q9YFU8 AF structure"/>
+            </div>
+            <div>
+                <p>PAE plot</p>
+                <img src="https://raw.githubusercontent.com/sverwimp/afragmenter/master/images/Q9YFU8/Q9YFU8_pae.png" alt="Q9YFU8 PAE plot"/>
+            </div>
+            <div>
+                <p>Crystal structures: 1W5S (green) and 1W5T (red)</p>
+                <img src="https://raw.githubusercontent.com/sverwimp/afragmenter/master/images/Q9YFU8/1w5s_1w5t.png" alt="1W5S (green) and 1W5T (red) structures"/>
+            </div>
+        </div>
+
+        <p>
+        Lowering the treshold even if initial inspection deems it not necessary can still change the results. Without changing the threshold
+        we see two domains, consistent with the results from <a href="https://www.ebi.ac.uk/pdbe/scop/search?t=txt;q=1w5s">SCOP</a> and 
+        <a href="https://scop.berkeley.edu/pdb/code=1w5s">SCOPe</a>. While lowering the threshold results in 3 domains, consistent with 
+        <a href="http://prodata.swmed.edu/ecod/af2_pdb/domain/e1w5sA1#tab-organization">ECOD</a>,
+        <a href="https://www.cathdb.info/pdb/1w5s">CATH</a>,
+        <a href="https://www.ebi.ac.uk/interpro/protein/reviewed/Q9YFU8/">InterPro</a> and
+        <a href="https://scop.berkeley.edu/pdb/code=1w5s">SCOP</a>.
+        </p>
+
+        <div>
+            <div>
+                <p>Threshold = 5</p>
+                <img src="https://raw.githubusercontent.com/sverwimp/afragmenter/master/images/Q9YFU8/Q9YFU8_two_domains.png" alt="Q9YFU8 two domains colored"/>
+            </div>
+            <div>
+                <p>Threshold = 3</p>
+                <img src="https://raw.githubusercontent.com/sverwimp/afragmenter/master/images/Q9YFU8/Q9YFU8_three_domains.png" alt="Q9YFU8 three domains colored"/>
+            </div>
+        </div>
+
+        <p>(Other settings kept as default values)</p>
+
+        <h3 id="resolution">Resolution</h3>
+
+        <p>The <b>resolution</b> can be thought of as the coarseness of clustering. Increasing the resolution will result in more, smaller clusters (/domains). Decreasing the resolution will result in fewer but larger clusters.</p>
+
+        <p>- Default: dependent on objective_function `{"modularity": 0.8, "cpm": 0.3}`</p>
+
+        <h4>Examples:</h4>
+
+        <h5><a href="https://alphafold.ebi.ac.uk/entry/P15807">P15807</a></h5>
+
+        <div>
+            <div>
+                <p>Resolution = 0.8</p>
+                <img src="https://raw.githubusercontent.com/sverwimp/afragmenter/master/images/P15807/resolution_0_8.png" alt="Resolution 0.8"/>
+            </div>
+            <div>
+                <p>Resolution = 1.1</p>
+                <img src="https://raw.githubusercontent.com/sverwimp/afragmenter/master/images/P15807/resolution_1_1.png" alt="Resolution 1.1"/>
+            </div>
+            <div>
+                <p>Resolution = 0.3</p>
+                <img src="https://raw.githubusercontent.com/sverwimp/afragmenter/master/images/P15807/resolution_0_3.png" alt="Resolution 0.3"/>
+            </div>
+        </div>
+
+        <h5><a href="https://alphafold.ebi.ac.uk/entry/A0A098AQT8">A0A098AQT8</a></h5>
+
+        <div>
+            <div>
+                <p>Resolution = 0.8</p>
+                <img src="https://raw.githubusercontent.com/sverwimp/afragmenter/master/images/A0A098AQT8/A0A098AQT8_resolution_0_8.png" alt="A0A098AQT8 Resolution 0.8"/>
+            </div>
+            <div>
+                <p>Resolution = 1.4</p>
+                <img src="https://raw.githubusercontent.com/sverwimp/afragmenter/master/images/A0A098AQT8/A0A098AQT8_resolution_1_4.png" alt="A0A098AQT8 Resolution 1.4"/>
+            </div>
+        </div>
+
+        <h3 id="objectivefunction">Objective function</h3>
+
+
+        <p>The objective function that is optimized during clustering, choices are either CPM (constant potts model) or Modularity. The contant potts model does not suffer from the resolution limit problem like modularity does, leading to more, smaller well-defined clusters.
+        This means that 'CPM' will result in more smaller, tightly connected clusters that represent specific subgroups or communities within the data. On the other hand, 'Modularity' will tend to produce fewer, larger clusters that encompass broader groups within the data.</p>
+
+        <p>For AFragmenter, 'CPM' translates to a more sensitive approach where we see many more smaller clusters, especially for disordered regions. 'Modularity' is less sensitive to small shifts in PAE values, and will be better at clustering residues from disordered regions together.</p>
+
+        <ul>
+            <li>Default: modularity</li>
+            <li>Options: [modularity, cpm]</li>
+        </ul>
+
+        <h4>Examples:</h4>
+
+        <h5><a href="https://alphafold.ebi.ac.uk/entry/P04637">P04637</a></h5>
+
+        <div>
+            <img src="https://raw.githubusercontent.com/sverwimp/afragmenter/master/images/P04637/PAE_results.png" alt="Result plots P04637">
+            <img src="https://raw.githubusercontent.com/sverwimp/afragmenter/master/images/P04637/structure_results.png" alt="Result structures P04637">
+        </div>
+
+        <h5><a href="https://alphafold.ebi.ac.uk/entry/Q837X5">Q837X5</a></h5>
+
+        <div>
+            <img src="https://raw.githubusercontent.com/sverwimp/afragmenter/master/images/Q837X5/PAE_results.png" alt="Result plots Q837X5">
+            <img src="https://raw.githubusercontent.com/sverwimp/afragmenter/master/images/Q837X5/structure_results.png" alt="Result structures Q837X5">
+        </div>
+
+        <h3>Minimum size</h3>
+
+        <p>The `min_size` parameter specifies the minimum number of residues required for a cluster / domain to be considered valid. Clusters below this threshold are filtered out during post-processing. This helps in reducing noise and focusing on significant structural or functional regions.</p>
+
+        <p>
+        - Default value: 10
+        - Valid range: 0 ≤ min_size ≤ Number of Residues
+        </p>
+
+        <p>A higher min_size is often used for larger proteins to focus on major domains, while a lower value allows capturing smaller but potentially important regions. Adjusting this parameter can impact the granularity of your clustering results.</p>
+
+        <p>For examples, refer to the examples in <a href="#objectivefunction">Objective function</a>.</p>
+
+        <h3 id="merge">Merge</h3>
+
+        <p>The `merge` parameter, also referred to as `attempt_merge`, plays a important role in refining the clustering process. 
+        When enabled, it attempts to merge smaller clusters (= below min_size) with adjacent larger ones, ensuring that the resulting clusters are more meaningful and less fragmented. Resulting clusters below the min_size are first attempted to be merged with adjacent larger clusters. If merging is not possible, the small clusters are filtered out.</p>
+
+        <p>
+        - Default value: `True`
+        </p>
+
+    </div>
+</div>
+
+{% endblock %}
