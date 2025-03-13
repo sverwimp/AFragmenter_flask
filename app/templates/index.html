@@ -19,17 +19,18 @@
                 <span class="selection"></span>
             </div>
             <div class="input-data">
-                <div id="div-afdb">
+                <div class="div-afdb input-transition">
                     
                     <input type="text" id="afdb-input" class="uniprot-form" name="{{ form.uniprot_id.name }}" placeholder="UniProt ID">
-                    <button id="uniprotSearch" class="btn" type="button">Search</button>
+                    <label for="{{ form.uniprot_id.name }}" class="afdb_label">Uniprot ID</label>
+                    <!-- <button id="uniprotSearch" class="btn" type="button">Search</button> -->
                 </div>
-                <div class="div-affiles" id="div-affiles">
-                    <div>
+                <div class="div-affiles input-transition">
+                    <div class="file-input-wrapper">
                         <label for="{{ form.alphafold_json.id }}" class="input-label json-label">AlphaFold json</label>
                         <input type="file" id="{{ form.alphafold_json.id }}" class="upload-input json-file-upload" name="{{ form.alphafold_json.name }}">
                     </div>
-                    <div>
+                    <div class="file-input-wrapper">
                         <label for="{{ form.structure_file.id }}" class="input-label " >Structure file (PDB or cif) [optional]</label>
                         <input type="file" id="{{ form.structure_file.id }}" class="upload-input structure-file-upload" name="{{ form.structure_file.name }}">
                     </div>

@@ -20,12 +20,6 @@ html {
     box-sizing: border-box;
 }
 
-a {
-    text-decoration: none;
-}
-
-/* Navigation bar */
-
 nav {
     height: 60px;
     background-color: var(--gunmetal);
@@ -33,6 +27,10 @@ nav {
     justify-content: space-between;
     color: var(--whitebackground);
     padding: 5px 30px;
+}
+
+a {
+    text-decoration: none;
 }
 
 nav a {
@@ -60,7 +58,9 @@ nav a {
     gap: 30px;
 }
 
+
 .nav-text-link {
+    text-decoration: none;
     padding: 15px;
     margin: -15px;
 }
@@ -74,17 +74,14 @@ nav a {
     height: 40px;
 }
 
-/* Main content */
-
 main {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    padding: 50px 60px 20px 60px;
-    /*padding: 60px;*/
+    /*padding: 30px 60px;*/
+    padding: 60px;
 }
 
-/* Main content - left = inputs */
 .main-left {
     flex: 1;
     padding: 20px;
@@ -92,8 +89,8 @@ main {
     border: 4px solid var(--gunmetal);
     border-radius: 16px;
     max-width: 350px;
+    
 }
-/* Main content - right = results */
 .main-right {
     flex: 3;
     min-width: 300px;
@@ -101,11 +98,13 @@ main {
     background-color: #33A1FD;
 }
 
+
 /*https://uiverse.io/Ghost-aft/cowardly-walrus-30*/
 
 .input {
     min-height: 11rem;
 }
+
 
 .input-type input {
     display: none;
@@ -168,101 +167,15 @@ main {
 .input-data {
     display: flex;
     margin: 24px 8px 0px 8px;
-    width: 100%;
 }
 
-/* Define transition for input fields */
-.input-transition {
-    transition: opacity 0.25s ease, transform 0.25s ease;
-    opacity: 0;
-    transform: translateY(-20px);
-    visibility: hidden; /* Use visibility instead of display */
-    position: absolute;  /* Prevent overlap */
-    width: 0;
-}
 
-/* Define visible state for input fields */
-.input-visible {
-    opacity: 1;
-    transform: translateY(0);
-    visibility: visible;
-    position: relative;
-    width: 100%;
-}
-
-.div-afdb {
-    position: relative;
-    padding: 15px 0 0;
-}
 
 .uniprot-form {
-    font-family: inherit;
-    width: 100%;
-    border: 0;
-    border-bottom: 2px solid var(--hover-gunmetal);
-    outline: 0;
-    font-size: 1.2rem;
-    color: var(--hover-gunmetal);
-    padding: 7px 0;
-    /*background: transparent;*/
-    background: var(--whitebackground);
-    transition: border-color 0.2s;
-}
-
-
-/* https://codepen.io/lucasyem/pen/ZEEYKdj */
-.uniprot-form::placeholder {
-    color: transparent;
-}
-.uniprot-form:placeholder-shown ~ .afdb_label {
-    font-size: 1.3rem;
-    cursor: text;
-    top: 20px;
-}
-
-.afdb_label {
-    position: absolute;
-    top: 0;
-    display: block;
-    transition: 0.2s;
-    font-size: 1rem;
-    color: #9b9b9b;
-}
-
-.uniprot-form:focus {
-    padding-bottom: 6px;
-    font-weight: 700;
-    border-width: 3px;
-    /* border-image: linear-gradient(to right, var(--blue), #e8f5ff); */
-    border-color: var(--blue);
-    border-image-slice: 1;
-}
-.uniprot-form:focus ~ .afdb_label {
-    position: absolute;
-    top: 0;
-    display: block;
-    transition: 0.2s;
-    font-size: 1rem;
-    color: var(--blue);
-    font-weight: 700;
-}
-
-/* reset input */
-.uniprot-form:required, .uniprot-form:invalid {
-    box-shadow: none;
-}
-
-
-
-
-.div-affiles {
     display: flex;
-    flex-direction: column;
-    gap: 16px;
+    padding: .375rem .75rem;
+    border-radius: 0.25rem;
 }
-
-
-
 
 .btn {
     display: inline-bloc;
@@ -278,43 +191,33 @@ main {
     background-color: var(--lightblue);
 }
 
+.div-affiles {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
 
-
-
-/* TODO: */
-/* https://www.viget.com/articles/styling-native-file-upload-input-field/ */
-.upload-input {
-    display: block; 
-    border-radius: 0.5rem; 
-    border-width: 1px; 
-    border-color: #D1D5DB; 
-    width: 100%; 
+.input-label {
+    display: block;
+    margin-bottom: 0.2rem;
     font-size: 0.875rem;
-    line-height: 1.25rem; 
-    color: #111827; 
-    background-color: #F9FAFB; 
-    cursor: pointer; 
-}
-.upload-input::placeholder {
-    color: #6b7280;
+    font-weight: 500;
+    color: #1f2937; /* text-gray-900 */
 }
 
-/*
 .upload-input {
     display: block;
     width: 100%;
     font-size: 0.875rem;
-    color: #1f2937; 
-    border: 1px solid #d1d5db; 
+    color: #1f2937; /* text-gray-900 */
+    border: 1px solid #d1d5db; /* border-gray-300 */
     cursor: pointer;
-    background-color: #f9fafb; 
+    background-color: #f9fafb; /* bg-gray-50 */
     outline: none;
 }
-*/
 
 .options {
     padding: 10px;
-    max-width: 300px;
 }
 
 .options-title {

@@ -1,12 +1,13 @@
 document.addEventListener('DOMContentLoaded', function() {
     const afdbRadio = document.querySelector('.radio-afdb');
     const affilesRadio = document.querySelector('.radio-affiles');
-    const afdbDiv = document.getElementById('div-afdb');
-    const affilesDiv = document.getElementById('div-affiles');
+    const afdbDiv = document.querySelector('.div-afdb');
+    const affilesDiv = document.querySelector('.div-affiles');
     
     const uniprotField = document.getElementById('afdb-input');
     const alphafoldJsonField = document.querySelector('.json-file-upload');
 
+    /*
     // Function to set required states based on radio button state
     function setRequiredStates() {
         if (afdbRadio.checked) {
@@ -17,6 +18,20 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (affilesRadio.checked) {
             afdbDiv.style.display = 'none';
             affilesDiv.style.display = 'flex';
+            uniprotField.required = false;
+            alphafoldJsonField.required = true;
+        }
+    }
+    */
+    function setRequiredStates() {
+        if (afdbRadio.checked) {
+            afdbDiv.classList.add("input-visible");
+            affilesDiv.classList.remove("input-visible");
+            uniprotField.required = true;
+            alphafoldJsonField.required = false;
+        } else if (affilesRadio.checked) {
+            affilesDiv.classList.add("input-visible");
+            afdbDiv.classList.remove("input-visible");
             uniprotField.required = false;
             alphafoldJsonField.required = true;
         }
@@ -42,6 +57,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
         let formData = new FormData(form); // Extract form data
         let userIterations = formData.get('iterations'); // Get user-specified iterations
+
+        if (formData.get('input_type') === 'afdb') {
+            // Check if UniProt ID has an associated AlphaFold prediction
+            let hasEntry = await checkAlphaFoldDatabaseEntry(formData.get('uniprot_id'));
+            if (hasEntry !== 0) {
+                alert('UniProt ID doesn not an associated AlphaFold prediction.');
+                return;
+            }
+        }
 
         async function submitForm(iterations) {
             formData.set('iterations', iterations);
@@ -136,6 +160,8 @@ document.addEventListener('DOMContentLoaded', function() {
         viewer.render();
     }
 
+    /*https://codepen.io/ajlohman/pen/GRWYWw
+    // Change table with something else?*/
 
     // Function to update the result table after form submission
     function updateTable(data) {
@@ -153,13 +179,38 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Create new table row
             let newRow = document.createElement("tr");
-            newRow.innerHTML = `<td>${keyNumber}</td><td>${totalSize}</td><td>${formattedIntervals}</td>`;
+            newRow.innerHTML = `<td class="partition-table">${keyNumber}</td><td class="nres-table">${totalSize}</td><td class="chopping-table">${formattedIntervals}</td>`;
             tableBody.appendChild(newRow);
         });
-
     }
 
+    async function checkAlphaFoldDatabaseEntry(uniprotId) {
+        // do nothing if field is empty
 
+        if (!uniprotId) return 1;
+
+        try {
+            uniprotId = uniprotId.toUpperCase().trim();
+            let afdb_url = `https://alphafold.ebi.ac.uk/api/prediction/${uniprotId}`;
+            let response = await fetch(afdb_url);
+    
+            // Set background color based on response status
+            if (typeof uniprotField !== "undefined" && !response.ok) {
+                
+                uniprotField.style.color = '#E78587';
+            }
+    
+            return response.ok ? 0 : 1;
+        } catch (error) {
+            console.error("Error:", error);
+            if (typeof uniprotField !== 'undefined') {
+                uniprotField.style.backgroundColor = '#E78587';
+            }
+            return 1;
+        }
+    }
+
+    /*
     // Check if UniProt ID has an associated AlphaFold prediction
     const uniprotSearchButton = document.getElementById('uniprotSearch');
     uniprotSearchButton.addEventListener('click', async () => {
@@ -179,9 +230,10 @@ document.addEventListener('DOMContentLoaded', function() {
             alert("Error: " + error);
         }
     });
+    */
     // Reset color of UniProt ID field when user starts typing
     uniprotField.addEventListener('input', () => {
-        uniprotField.style.backgroundColor = 'white';
+        uniprotField.style.color = '#5c676b';
     });
 
     
