@@ -9,7 +9,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.9"
 flask = "^3.1.0"
-afragmenter = ">=0.0.3"
+afragmenter = ">=0.0.4"
 flask-wtf = "^1.2.2"
 
 

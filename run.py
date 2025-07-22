@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify
 from flask_wtf.csrf import CSRFProtect
 from afragmenter import AFragmenter, fetch_afdb_data
 from afragmenter.structure_displacement import displace_structure
-from afragmenter.sequence_reader import SequenceReader
+from afragmenter.sequence_reader import _determine_file_format
 import numpy as np
 
 from app import app
@@ -99,7 +99,7 @@ def process_afdb_input(data: dict):
     if isinstance(cluster_intervals, dict) and 'error' in cluster_intervals:
         return cluster_intervals
     
-    structure_format = SequenceReader.determine_file_format(structure)
+    structure_format = _determine_file_format(structure)
     return format_return_data(cluster_intervals, structure, structure_format)
 
 
@@ -122,7 +122,7 @@ def process_file_upload(data: dict):
         
     structure_data = data.get('structure_file').read()
     structure_data = structure_data.decode('utf-8')
-    structure_format = SequenceReader.determine_file_format(structure_data)
+    structure_format = _determine_file_format(structure_data)
     return format_return_data(cluster_intervals, structure_data, structure_format)
 
 
