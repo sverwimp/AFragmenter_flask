@@ -82,9 +82,9 @@ class InputForm(flask_wtf.FlaskForm):
         "PAE contrast threshold",
         validators=[
             val.NumberRange(min=0, max=32),
-            val.DataRequired()
+            val.InputRequired()
         ],
-        default=5
+        default=2
     )
 
     resolution = wtforms.DecimalField(
@@ -92,9 +92,9 @@ class InputForm(flask_wtf.FlaskForm):
         places=1,
         validators=[
             val.NumberRange(min=0, max=1.5),
-            val.DataRequired()
+            val.InputRequired()
         ],
-        default=0.8
+        default=0.7
     )
 
     min_size = wtforms.IntegerField(

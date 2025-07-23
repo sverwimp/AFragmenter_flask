@@ -107,6 +107,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 if (result.success) {
                     updateTable(result.data.cluster_intervals);
+                    updatePaePlot(result.data.pae_plot_path);
                     // If structure is available, update 3D viewer
                     if (result.data.structure && result.data.cluster_intervals) {
                         update3DViewer(result.data.structure, result.data.cluster_intervals, result.data.structure_format);
@@ -158,6 +159,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
         viewer.zoomTo();
         viewer.render();
+    }
+
+    function updatePaePlot(paePlotPath) {
+        let paePlotImg = document.getElementById('pae-plot-img');
+        // print the paePlotPath to the console
+        // console.log('PAE Plot Path:', paePlotPath);
+        paePlotImg.src = `${paePlotPath}?t=${new Date().getTime()}`;
     }
 
     /*https://codepen.io/ajlohman/pen/GRWYWw

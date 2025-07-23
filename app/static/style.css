@@ -41,12 +41,13 @@ nav a {
 
 .home-info {
     display: flex;
-    align-items: center;
     gap: 30px;
+    align-items: baseline;
 }
 .home-title {
     font-size: 1.7rem;
     font-weight: bold;
+    align-items: center;
 }
 @media(max-width: 1100px) {
     .home-description {
@@ -508,3 +509,28 @@ summary {
     min-width: 10vw;
 }
 */
+
+.navbar-collapse {
+    z-index: 1050;
+    position: relative;
+    transition: all 0.3s ease;
+    background-color: #212529;
+    padding-left: 1rem;
+    border-radius: 0 0 0.5rem 0.5rem;
+}
+
+.navbar-dark .navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 991.98px) {
+    .navbar-collapse {
+        width: 100%;
+    }
+
+    body {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}
